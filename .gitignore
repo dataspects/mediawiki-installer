@@ -1,0 +1,13 @@
+logs
+system_root
+mariadb_data
+snapshots
+wikicj
+dataspectsSystemCoreOntology
+tmp
+_secrets.sh
+dsrepository-cli
+ontologies
+mediawiki-installer.yml
+mwmconfigdb.sqlite
+currentresources

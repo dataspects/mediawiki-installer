@@ -1,0 +1,4 @@
+Welcome!
+
+* [[Get started...]]
+* [[Help:Editing pages]]

@@ -1,0 +1,30 @@
+[
+  {
+    "name": "1.35.0-2103040820",
+    "comment": {
+      "Apps": [
+        "dataspects/dataspectsSystemCoreOntology",
+        "dataspects/dataspectsConferenceManagementOntology"
+      ],
+      "MediaWiki version": "1.35.0",
+      "MediaWiki extensions": {
+        "SemanticMediaWiki": "3.2.1"
+      },
+      "MediaWiki skins": {}
+    }
+  },
+  {
+    "name": "1.35.1-2103040820",
+    "comment": {
+      "Apps": [
+        "dataspects/dataspectsSystemCoreOntology",
+        "dataspects/dataspectsConferenceManagementOntology"
+      ],
+      "MediaWiki version": "1.35.1",
+      "MediaWiki extensions": {
+        "SemanticMediaWiki": "3.2.2"
+      },
+      "MediaWiki skins": {}
+    }
+  }
+]

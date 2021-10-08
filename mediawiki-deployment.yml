@@ -1,0 +1,123 @@
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: mwm-deployment
+  labels:
+    app: mwm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mwm
+  template:
+    metadata:
+      labels:
+        app: mwm
+    spec:
+      # CreateCampEMWCon2021: introduce volume type switch: owner, group, permissions
+      volumes:
+        # Restic
+        - name: snapshots
+          hostPath:
+            path: /home/dserver/snapshots
+        - name: currentresources
+          hostPath:
+            path: /home/dserver/currentresources
+        - name: restic_password
+          hostPath:
+            path: /home/dserver/mediawiki-cli/restic_password
+        - name: mwmsqlite
+          hostPath:
+            path: /home/dserver/mwcliconfigdb.sqlite
+        # MediaWiki        
+        - name: system_root_w_extensions
+          hostPath:
+            path: /home/dserver/system_root/w/extensions
+        - name: system_root_w_skins
+          hostPath:
+            path: /home/dserver/system_root/w/skins
+        - name: system_root_w_vendor
+          hostPath:
+            path: /home/dserver/system_root/w/vendor
+        - name: system_root_w_composerLocalJSON
+          hostPath:
+            path: /home/dserver/system_root/w/composer.local.json
+        - name: system_root_w_composerLocalLock
+          hostPath:
+            path: /home/dserver/system_root/w/composer.local.lock
+        - name: system_root_w_images
+          hostPath:
+            path: /home/dserver/system_root/w/images
+        # Apache
+        - name: apache_sites_available
+          hostPath:
+            path: /home/dserver/mediawiki-installer/conf/apache/sites-available
+        # MWM
+        - name: mwmCLI
+          hostPath:
+            path: /home/dserver/mediawiki-cli
+        - name: mwmLogs
+          hostPath:
+            path: /home/dserver/system_root/logs
+        # MariaDB
+        - name: mariadb_data
+          hostPath:
+            path: /home/dserver/mariadb_data
+      containers:
+        # CreateCampEMWCon2021: optimize Dockerfile: executing user and permissions: https://github.com/dataspects/dataspectsSystemBuilder/tree/master/docker-images/mediawiki
+        - image: docker.io/dataspects/mediawiki:1.35.0-2104141705
+          name: mediawiki
+          volumeMounts:
+            # MediaWiki
+            # - mountPath: /var/www/html/w/extensions
+            #   name: system_root_w_extensions
+            # - mountPath: /var/www/html/w/skins
+            #   name: system_root_w_skins
+            # - mountPath: /var/www/html/w/vendor
+            #   name: system_root_w_vendor
+            - mountPath: /var/www/html/w/composer.local.json
+              name: system_root_w_composerLocalJSON
+            - mountPath: /var/www/html/w/composer.local.lock
+              name: system_root_w_composerLocalLock
+            - mountPath: /var/www/html/w/images
+              name: system_root_w_images
+            # MWM
+            - mountPath: /var/www/html/logs
+              name: mwmLogs
+            - mountPath: /var/www/html/mwmconfigdb.sqlite
+              name: mwmsqlite
+            - mountPath: /var/www/html/cli
+              name: mwmCLI
+            # Apache
+            - mountPath: /etc/apache2/sites-available
+              name: apache_sites_available
+            # Restic
+            - mountPath: /var/www/html/restic_password
+              name: restic_password
+            - mountPath: /var/www/html/snapshots
+              name: snapshots
+            - mountPath: /var/www/html/currentresources
+              name: currentresources
+          env:
+            - name: MYSQL_HOST
+              value: mwm-deployment-pod-0-mariadb
+            - name: DATABASE_NAME
+              value: mediawiki
+            - name: MYSQL_USER
+              value: mediawiki
+            - name: WG_DB_PASSWORD
+              value: wgdbpassword
+          ports:
+            # CreateCampEMWCon2021: optimize Apache Virtual Host config: mwmITLocal, mwmITIntra, mwmITCloud: https://github.com/dataspects/dataspectsSystemBuilder/tree/master/docker-images/mediawiki
+            - containerPort: 443
+              hostPort: 4443
+        - image: docker.io/library/mariadb:10.5.5
+          name: mariadb
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: 123456
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: mariadb_data
+      dnsConfig: {}
+    status: {}
