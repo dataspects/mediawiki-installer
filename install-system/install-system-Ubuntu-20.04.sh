@@ -1,62 +1,62 @@
 #!/bin/bash
 # Public MWMBashScript: Install system from scratch.
 
-source ../mediawiki-cli/config-db/lib.sh
-source ../mediawiki-cli/lib/permissions.sh
-# These are obtained from command parameters:
-set -a
-  source $ENVmwins
-  source $ENVmwcli
-set +a
+# source ../mediawiki-cli/config-db/lib.sh
+# source ../mediawiki-cli/lib/permissions.sh
+# # These are obtained from command parameters:
+# set -a
+#   source $ENVmwins
+#   source $ENVmwcli
+# set +a
 
-if [ -n "$DEBUG" ] ; then echo "RUN LEX2110071929" ; fi
+# if [ -n "$DEBUG" ] ; then echo "RUN LEX2110071929" ; fi
 
-source ./install-system/check-and-complete-environment.sh
-source $MEDIAWIKI_CLI_ON_HOSTING_SYSTEM/config-db/lib.sh
-source $MEDIAWIKI_CLI_ON_HOSTING_SYSTEM/logging/lib.sh
-source $MEDIAWIKI_CLI_ON_HOSTING_SYSTEM/lib/utils.sh
-source $MEDIAWIKI_CLI_ON_HOSTING_SYSTEM/lib/permissions.sh
+# source ./install-system/check-and-complete-environment.sh
+# source $MEDIAWIKI_CLI_ON_HOSTING_SYSTEM/config-db/lib.sh
+# source $MEDIAWIKI_CLI_ON_HOSTING_SYSTEM/logging/lib.sh
+# source $MEDIAWIKI_CLI_ON_HOSTING_SYSTEM/lib/utils.sh
+# source $MEDIAWIKI_CLI_ON_HOSTING_SYSTEM/lib/permissions.sh
 
-# initializeSystemLog
-if [ -n "$DEBUG" ] ; then echo "RUN LEX2110080709" ; fi
-$MEDIAWIKI_CLI_ON_HOSTING_SYSTEM/initialize-mwcliconfigdb.sh
+# # initializeSystemLog
+# if [ -n "$DEBUG" ] ; then echo "RUN LEX2110080709" ; fi
+# $MEDIAWIKI_CLI_ON_HOSTING_SYSTEM/initialize-mwcliconfigdb.sh
 
-mkdir --parent \
-  $SYSTEM_ROOT_FOLDER_ON_HOSTING_SYSTEM/w/extensions \
-  $SYSTEM_ROOT_FOLDER_ON_HOSTING_SYSTEM/w/skins \
-  $SYSTEM_ROOT_FOLDER_ON_HOSTING_SYSTEM/w/vendor \
-  $SYSTEM_ROOT_FOLDER_ON_HOSTING_SYSTEM/w/images \
-  $SYSTEM_SNAPSHOT_FOLDER_ON_HOSTING_SYSTEM \
-  $CURRENT_RESOURCES_ON_HOSTING_SYSTEM \
-  $MARIADB_FOLDER_ON_HOSTING_SYSTEM
-writeToSystemLog "Initialized hostPath folders"
+# mkdir --parent \
+#   $SYSTEM_ROOT_FOLDER_ON_HOSTING_SYSTEM/w/extensions \
+#   $SYSTEM_ROOT_FOLDER_ON_HOSTING_SYSTEM/w/skins \
+#   $SYSTEM_ROOT_FOLDER_ON_HOSTING_SYSTEM/w/vendor \
+#   $SYSTEM_ROOT_FOLDER_ON_HOSTING_SYSTEM/w/images \
+#   $SYSTEM_SNAPSHOT_FOLDER_ON_HOSTING_SYSTEM \
+#   $CURRENT_RESOURCES_ON_HOSTING_SYSTEM \
+#   $MARIADB_FOLDER_ON_HOSTING_SYSTEM
+# writeToSystemLog "Initialized hostPath folders"
 
-### >>>
-# MWM Concept: initialize persistent mediawiki service volumes
-echo $DEBUG
-if [ -n "$DEBUG" ] ; then echo "RUN LEX2110080710" ; fi
-source ./install-system/initialize-persistent-mediawiki-service-volumes.sh
-# <<<
+# ### >>>
+# # MWM Concept: initialize persistent mediawiki service volumes
+# echo $DEBUG
+# if [ -n "$DEBUG" ] ; then echo "RUN LEX2110080710" ; fi
+# source ./install-system/initialize-persistent-mediawiki-service-volumes.sh
+# # <<<
 
-if [ -n "$DEBUG" ] ; then echo "RUN LEX2110080711" ; fi
-touch $SYSTEM_ROOT_FOLDER_ON_HOSTING_SYSTEM/mwmLocalSettings.php
-echo "{}" > $SYSTEM_ROOT_FOLDER_ON_HOSTING_SYSTEM/w/composer.local.json
-echo "{}" > $SYSTEM_ROOT_FOLDER_ON_HOSTING_SYSTEM/w/composer.local.lock
+# if [ -n "$DEBUG" ] ; then echo "RUN LEX2110080711" ; fi
+# touch $SYSTEM_ROOT_FOLDER_ON_HOSTING_SYSTEM/mwmLocalSettings.php
+# echo "{}" > $SYSTEM_ROOT_FOLDER_ON_HOSTING_SYSTEM/w/composer.local.json
+# echo "{}" > $SYSTEM_ROOT_FOLDER_ON_HOSTING_SYSTEM/w/composer.local.lock
 
 
 
 
 
 # echo $SYSTEM_SNAPSHOT_FOLDER_ON_HOSTING_SYSTEM
-if [ -n "$DEBUG" ] ; then echo "RUN LEX2110080712" ; fi
-envsubst < mediawiki-deployment-local.tpl > mediawiki-deployment.yml
+# if [ -n "$DEBUG" ] ; then echo "RUN LEX2110080712" ; fi
+# envsubst < mediawiki-deployment-local.tpl > mediawiki-deployment.yml
 
-$CONTAINER_COMMAND pod stop $POD_NAME
-$CONTAINER_COMMAND pod rm $POD_NAME
+# $CONTAINER_COMMAND pod stop $POD_NAME
+# $CONTAINER_COMMAND pod rm $POD_NAME
 
-if [ -n "$DEBUG" ] ; then echo "RUN LEX2110080713" ; fi
+# if [ -n "$DEBUG" ] ; then echo "RUN LEX2110080713" ; fi
 
-$CONTAINER_COMMAND play kube mediawiki-deployment.yml
+docker-compose up -d
 
 # setPermissionsOnSystemInstanceRoot
 
